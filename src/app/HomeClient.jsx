@@ -153,8 +153,8 @@ function HomeContent({ newProducts, hotProducts, categories, bestProducts }) {
                   href={`/category/${cat.slug}`}
                   className="relative rounded-2xl overflow-hidden aspect-[3/4] group block no-underline"
                 >
-                  {cat.image_url ? (
-                    <Image src={cat.image_url} alt={cat.name_en} fill className="object-cover transition-transform duration-600 group-hover:scale-105" />
+                  {cat.first_image ? (
+                    <Image src={cat.first_image} alt={cat.name_en} fill className="object-cover transition-transform duration-600 group-hover:scale-105" />
                   ) : (
                     <div className={`absolute inset-0 bg-gradient-to-br ${catColors[i % catColors.length]} transition-transform duration-600 group-hover:scale-105`} />
                   )}

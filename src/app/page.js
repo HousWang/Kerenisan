@@ -37,8 +37,9 @@ export default async function HomePage() {
       .limit(8),
   ]);
 
-  // Count products per category
+  // Count products per category and get first product image
   const catCounts = {};
+  const catImages = {};
   if (categories) {
     for (const cat of categories) {
       const { count } = await supabase
@@ -47,6 +48,20 @@ export default async function HomePage() {
         .eq('category_id', cat.id)
         .eq('is_published', true);
       catCounts[cat.id] = count || 0;
+
+      // Get first product image for this category
+      const { data: firstProduct } = await supabase
+        .from('products')
+        .select('product_images(*)')
+        .eq('category_id', cat.id)
+        .eq('is_published', true)
+        .order('sort_order')
+        .limit(1)
+        .single();
+      const imgs = firstProduct?.product_images;
+      if (imgs && imgs.length > 0) {
+        catImages[cat.id] = imgs[0].image_url;
+      }
     }
   }
 
@@ -54,7 +69,11 @@ export default async function HomePage() {
     <HomeClient
       newProducts={newProducts || []}
       hotProducts={hotProducts || []}
-      categories={(categories || []).map(c => ({ ...c, count: catCounts[c.id] || 0 }))}
+      categories={(categories || []).map(c => ({
+        ...c,
+        count: catCounts[c.id] || 0,
+        first_image: c.image_url || catImages[c.id] || null,
+      }))}
       bestProducts={bestProducts || []}
     />
   );
